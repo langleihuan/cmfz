@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baizhi.dao.ArticleDao">
+
+    <resultMap id="ArticleMap" type="Article">
+        <id column="aid" property="id"></id>
+        <result column="aname" property="name"></result>
+        <result column="picpath" property="picpath"></result>
+        <result column="content" property="content"/>
+        <result column="create_time" property="create_time"/>
+        <result column="publish_date" property="publish_date"/>
+        <result column="status" property="status"/>
+        <result column="master_id" property="master_id"/>
+
+        <association property="master" javaType="Master">
+            <id column="mid" property="id"/>
+            <result column="username" property="username"/>
+            <result column="mname" property="name"/>
+            <result column="head" property="head"/>
+        </association>
+    </resultMap>
+
+    <select id="queryByPage" resultMap="ArticleMap">
+       select a.id aid,a.name aname,a.picpath,a.content,a.create_time,a.publish_date,a.status,a.master_id,
+			 m.id mid,m.name mname,m.username,m.head
+			 from (SELECT id,name,picpath,content,create_time,publish_date,status,master_id from article
+			 LIMIT #{start},#{size}) a
+			 LEFT JOIN master m
+			 on a.master_id = m.id
+    </select>
+
+    <select id="queryTotalCounts" resultType="java.lang.Integer">
+        select count(id) from article
+    </select>
+
+    <delete id="deleteArticle">
+        delete from article where id=#{id}
+    </delete>
+
+    <insert id="addArticle">
+        insert into article values (#{id},#{name},#{picpath},#{content},#{create_time},#{publish_date},#{status},#{master.id})
+    </insert>
+
+    <update id="updateArticle">
+        update article set name=#{name},picpath=#{picpath},content=#{content},create_time=#{create_time},publish_date=#{publish_date},status=#{status},master_id=#{master.id} where id=#{id}
+    </update>
+
+    <select id="queryFive" resultMap="ArticleMap">
+        SELECT a.id aid,a.name aname,a.picpath,a.content,a.create_time,a.publish_date,a.status,a.master_id,
+			 m.id mid,m.name mname,m.username,m.head
+			 from article a
+			 left join master m
+			 on a.master_id = m.id
+			 order by a.create_time limit 0,3
+    </select>
+
+    <select id="queryById" resultMap="ArticleMap">
+         SELECT a.id aid,a.name aname,a.picpath,a.content,a.create_time,a.publish_date,a.status,a.master_id,
+			 m.id mid,m.name mname,m.username,m.head
+			 from article a
+			 left join master m
+			 on a.master_id = m.id
+			 where a.id=#{id}
+    </select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
